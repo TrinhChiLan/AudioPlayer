@@ -120,6 +120,8 @@ class AudioPlay < Gosu::Window
     @currentTrack = nil
     @currentTrackIndex = nil
     @trackButtons = []
+    @playingBack = false
+    @audioPaused = false
     #
     @homeIcon = Gosu::Image.new('Assets\Images\Icons\home.png')
     @playIcon = Gosu::Image.new('Assets\Images\Icons\play-button-arrowhead.png')
@@ -140,6 +142,7 @@ class AudioPlay < Gosu::Window
     end
     if path != nil then
       setAudio(path)
+      @playingBack = true
     end
   end
   #
@@ -147,7 +150,21 @@ class AudioPlay < Gosu::Window
     if @currentState == 1 then
       for i in 0..[3, @albums.length - 1].min do
         if (mouse_x > $albumButtons[i][0] and mouse_x < $albumButtons[i][0] + 200) and (mouse_y > $albumButtons[i][1] and mouse_y < $albumButtons[i][1] + 200) then
-          return i
+          @currentAlbum = i
+          @currentAlbumIcon = Gosu::Image.new(@albums[@currentAlbum].albumicon)
+          @currentState = 2
+          @currentTrackIndex = 0
+          #Le loop
+          albumTracks = @albums[@currentAlbum].tracks
+          while @currentTrackIndex < albumTracks.length do
+            @currentTrack = Gosu::Song.new(path)
+            @currentTrack.play
+            while @currentTrack.playing? do
+              sleep 0.1
+            end
+            @currentTrackIndex += 1
+          end
+          #
         end
       end
     elsif @currentState == 2 then
@@ -155,40 +172,23 @@ class AudioPlay < Gosu::Window
       albumTracks = @albums[@currentAlbum].tracks
       for i in 0..[15, albumTracks.length - 1].min do
         if (mouse_x > @trackButtons[i][0] and mouse_x < @trackButtons[i][0] + @trackButtons[i][2]) and (mouse_y > @trackButtons[i][1] and mouse_y < @trackButtons[i][1] + 20) then
-          @currentTrackIndex = i
-          playAudio(albumTracks[i].location)
+        
         end
       end
       #Check for utility buttons
+      #Pause and unpause
       if (mouse_x > 240 and mouse_x < 260) and (mouse_y > 315 and mouse_y < 335) then
-        if @currentTrack == nil then
-          playAudio(albumTracks[0].location)
-        else
-          if @currentTrack.paused? then 
-            @currentTrack.play
-          else
-            @currentTrack.pause
-          end
-        end
+
       end
       #Home button
       if (mouse_x > 5 and mouse_x < 25) and (mouse_y > 5 and mouse_y < 25) then
-        if @currentTrack then @currentTrack.pause end
-        @currentState = 1
-        @currentAlbum = nil
-        @currentTrack = nil
-        @currentTrackIndex = nil
-        @trackButtons = []
+
       end
       #Next and previous button
-      if (mouse_x > 270 and mouse_x < 290) and (mouse_y > 315 and mouse_y < 335) then
-        @currentTrackIndex += 1
-        if @currentTrackIndex > albumTracks.length - 1 then @currentTrackIndex = 0 end
-        setAudio(albumTracks[@currentTrackIndex].location)
-      elsif (mouse_x > 210 and mouse_x < 230) and (mouse_y > 315 and mouse_y < 335) then
-        @currentTrackIndex -= 1
-        if @currentTrackIndex < 0 then @currentTrackIndex = albumTracks.length - 1 end
-        setAudio(albumTracks[@currentTrackIndex].location)
+      if (mouse_x > 270 and mouse_x < 290) and (mouse_y > 315 and mouse_y < 335) then #Next
+
+      elsif (mouse_x > 210 and mouse_x < 230) and (mouse_y > 315 and mouse_y < 335) then #Previous
+
       end
     end
     return nil
@@ -209,16 +209,14 @@ class AudioPlay < Gosu::Window
       @homeIcon.draw(5, 5, 0, 20.0/@homeIcon.width, 20.0/@homeIcon.height)
       @nextIcon.draw(270, 315, 0, 20.0/@nextIcon.width, 20.0/@nextIcon.height)
       @previousIcon.draw(210, 315, 0, 20.0/@previousIcon.width, 20.0/@previousIcon.height)
-      if @currentTrack and @currentTrack.playing? then
+      if @playingBack then
         @pauseIcon.draw(240, 315, 0, 20.0/@pauseIcon.width, 20.0/@pauseIcon.height)
         displayText = "#{albumTracks[@currentTrackIndex].name}"
         posX = 250 - @trackFont.text_width(displayText)/2
         @trackFont.draw(displayText, posX, 290, 0)
-      elsif @currentTrack == nil
-        @playIcon.draw(240, 315, 0, 20.0/@playIcon.width, 20.0/@playIcon.height)
       else
         @playIcon.draw(240, 315, 0, 20.0/@playIcon.width, 20.0/@playIcon.height)
-        displayText = "#{albumTracks[@currentTrackIndex].name}"
+        displayText = "Paused - #{albumTracks[@currentTrackIndex].name}"
         posX = 250 - @trackFont.text_width(displayText)/2
         @trackFont.draw(displayText, posX, 290, 0)
       end
@@ -237,15 +235,7 @@ class AudioPlay < Gosu::Window
   end
 
   def button_down(id)
-    unless getButtonHovering() then return end
-    returninfo = getButtonHovering()
-    if @currentState == 1 then
-      @currentAlbum = returninfo
-      @currentAlbumIcon = Gosu::Image.new(@albums[@currentAlbum].albumicon)
-      @currentState = 2
-      @currentTrackIndex = 0
-      #puts @currentAlbum, @currentState
-    end
+    getButtonHovering()
   end
 end
 
