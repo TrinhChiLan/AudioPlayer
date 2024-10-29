@@ -95,13 +95,6 @@ $albumButtons = [
   [25, 25], [250, 25], [25, 250], [250, 250]
 ]
 
-$buttons = [
-  [50, 50, Gosu::Color::GREEN, 'Better Off Alone', 'Assets\Audios\Combat Initiation\Better Off Alone.mp3'],
-  [250, 50, Gosu::Color::RED, 'Cursed Abbey', 'Assets\Audios\Combat Initiation\Cursed Abbey.mp3'],
-  [50, 250, Gosu::Color::BLUE, 'Delicate Glass in Ice', 'Assets\Audios\Combat Initiation\Delicate Glass in Ice.mp3'],
-  [250, 250, Gosu::Color::YELLOW, 'Darkness Dueling', 'Assets\Audios\Combat Initiation\Darkness Dueling.mp3']
-]
-
 #Main
 class AudioPlay < Gosu::Window
   #
