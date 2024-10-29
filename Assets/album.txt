@@ -1,0 +1,17 @@
+1
+Potoe
+Combat Initiation 
+2024
+2
+Assets\Images\CombatInitiation.jpg
+5
+Better Off Alone
+Assets\Audios\Combat Initiation\Better Off Alone.mp3
+Chaotic Dunes & Blistering Heat
+Assets\Audios\Combat Initiation\Chaotic Dunes & Blistering Heat.mp3
+Cursed Abbey
+Assets\Audios\Combat Initiation\Cursed Abbey.mp3
+Delicate Glass in Ice
+Assets\Audios\Combat Initiation\Delicate Glass in Ice.mp3
+Darkness Dueling
+Assets\Audios\Combat Initiation\Darkness Dueling.mp3
