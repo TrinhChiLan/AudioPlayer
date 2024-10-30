@@ -132,6 +132,7 @@ class AudioPlay < Gosu::Window
   def needs_cursor?; true; end
   def playIndexedTrack()
     albumTracks = @albums[@currentAlbum].tracks
+    puts "Playing track with index #{@currentTrackIndex} - #{albumTracks[@currentTrackIndex].name}"
     @currentTrack = Gosu::Song.new(albumTracks[@currentTrackIndex].location)
     @currentTrack.play
   end
