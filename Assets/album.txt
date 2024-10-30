@@ -1,4 +1,4 @@
-3
+4
 Potoe
 Combat Initiation 
 2024
@@ -43,3 +43,21 @@ Tình Yêu Xanh Lá
 Assets\Audios\ThinhSuy\Tình Yêu Xanh Lá (juju).mp3
 Slowly
 Assets\Audios\ThinhSuy\Slowly.mp3
+Yungatita
+Over You
+2020
+0
+Assets\Images\overYou.png
+6
+Bedroom
+Assets\Audios\Yungatita\Behind the Gates.mp3
+Check Your Snaps
+Assets\Audios\Yungatita\Check Your Snaps.mp3
+7 Weeks & 3 Days
+Assets\Audios\Yungatita\7 Weeks & 3 Days.mp3
+Everyone Can See
+Assets\Audios\Yungatita\Everyone Can See.mp3
+Indie Dream Boy
+Assets\Audios\Yungatita\Indie Dream Boy.mp3
+Behind the Gates
+Assets\Audios\Yungatita\Behind the Gates.mp3

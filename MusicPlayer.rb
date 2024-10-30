@@ -154,7 +154,9 @@ class AudioPlay < Gosu::Window
       albumTracks = @albums[@currentAlbum].tracks
       for i in 0..[15, albumTracks.length - 1].min do
         if (mouse_x > @trackButtons[i][0] and mouse_x < @trackButtons[i][0] + @trackButtons[i][2]) and (mouse_y > @trackButtons[i][1] and mouse_y < @trackButtons[i][1] + 20) then
-          
+          @currentTrack.stop
+          @currentTrackIndex = i
+          if @audioPaused then @currentTrack = Gosu::Song.new(albumTracks[@currentTrackIndex].location) else playIndexedTrack() end
         end
       end
       #Check for utility buttons
@@ -174,6 +176,7 @@ class AudioPlay < Gosu::Window
         @currentAlbum = nil
         @currentState = 1
         @currentTrackIndex = nil
+        @audioPaused = false
         if @currentTrack then @currentTrack.stop end
         @currentTrack = nil
       end
@@ -263,7 +266,12 @@ class AudioPlay < Gosu::Window
   end
   #
   def button_down(id)
-    getButtonClicked()
+    if id == Gosu::MsLeft then
+      getButtonClicked()
+    elsif id == Gosu::KbEscape then
+      exit
+    end
+    
   end
 end
 
