@@ -1,6 +1,6 @@
-4
+5
 Potoe
-Combat Initiation 
+this is what falling in _ feels like
 2024
 2
 Assets\Images\CombatInitiation.jpg
@@ -50,7 +50,7 @@ Over You
 Assets\Images\overYou.png
 6
 Bedroom
-Assets\Audios\Yungatita\Behind the Gates.mp3
+Assets\Audios\Yungatita\Bedroom.mp3
 Check Your Snaps
 Assets\Audios\Yungatita\Check Your Snaps.mp3
 7 Weeks & 3 Days
@@ -61,3 +61,32 @@ Indie Dream Boy
 Assets\Audios\Yungatita\Indie Dream Boy.mp3
 Behind the Gates
 Assets\Audios\Yungatita\Behind the Gates.mp3
+TEMPOREX
+Care
+2016
+0
+Assets\Images\Care.jpg
+11
+Hi
+Assets\Audios\TEMPOREX\Hi.mp3   
+Nice Boys
+Assets\Audios\TEMPOREX\Nice Boys.mp3
+Care
+Assets\Audios\TEMPOREX\Care.mp3
+Daydream
+Assets\Audios\TEMPOREX\Daydream.mp3
+Alone Time
+Assets\Audios\TEMPOREX\Alone Time.mp3
+Lost in a Flower Field
+Assets\Audios\TEMPOREX\Lost in a Flower Field.mp3
+The Right Place
+Assets\Audios\TEMPOREX\The Right Place.mp3
+I Should Change
+Assets\Audios\TEMPOREX\I Should Change.mp3
+Vacant Eyes
+Assets\Audios\TEMPOREX\Vacant Eyes.mp3
+Let's Keep It Virtual
+Assets\Audios\TEMPOREX\Let's Keep It Virtual.mp3
+Around You
+Assets\Audios\TEMPOREX\Around You.mp3
+Planned: t+pazolite - TPZREMAKE, JVKE - this is what falling in _ feels like

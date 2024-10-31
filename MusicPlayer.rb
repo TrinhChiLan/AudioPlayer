@@ -117,6 +117,10 @@ class AudioPlay < Gosu::Window
     albumfile.close()
     @currentAlbumIcon = nil
     #
+    @page = 1
+    @maxPage = @albums.length/4 + @albums.length%4
+    puts "Max page: #{@maxPage}"
+    #
     @currentTrack = nil
     @currentTrackIndex = nil
     @trackButtons = []
@@ -139,8 +143,9 @@ class AudioPlay < Gosu::Window
   #
   def getButtonClicked()
     if @currentState == 1 then
-      for i in 0..[3, @albums.length - 1].min do
-        if (mouse_x > $albumButtons[i][0] and mouse_x < $albumButtons[i][0] + 200) and (mouse_y > $albumButtons[i][1] and mouse_y < $albumButtons[i][1] + 200) then
+      for i in (4*(@page - 1))..[3 + (4*(@page - 1)), @albums.length - 1].min do
+        aButtonIndex = i - 4*(@page - 1) #aButtonIndex stands for Album Buttons index, since it only ranges from 1-4 we need to deduct from the actual index.
+        if (mouse_x > $albumButtons[aButtonIndex][0] and mouse_x < $albumButtons[aButtonIndex][0] + 200) and (mouse_y > $albumButtons[aButtonIndex][1] and mouse_y < $albumButtons[aButtonIndex][1] + 200) then
           if @playingBack then return end
           @playingBack = true
           @currentAlbum = i
@@ -148,6 +153,14 @@ class AudioPlay < Gosu::Window
           @currentState = 2
           @currentTrackIndex = 0
           playIndexedTrack()
+          #Generate track buttons
+          albumTracks = @albums[@currentAlbum].tracks
+          buttonX = 25
+          buttonY = 310
+          for i in 0..[15, albumTracks.length - 1].min do
+            @trackButtons[i] = [buttonX, buttonY, @trackFont.text_width(processString(albumTracks[i].name))]
+            if i%2 == 0 then buttonX += 225 else buttonX -= 225; buttonY += 20 end
+          end
         end
       end
     elsif @currentState == 2 then
@@ -162,7 +175,7 @@ class AudioPlay < Gosu::Window
       end
       #Check for utility buttons
       #Pause and unpause
-      if (mouse_x > 240 and mouse_x < 260) and (mouse_y > 315 and mouse_y < 335) then
+      if (mouse_x > 240 and mouse_x < 260) and (mouse_y > 280 and mouse_y < 300) then
         if @audioPaused then
           @audioPaused = false
           @currentTrack.play
@@ -178,16 +191,17 @@ class AudioPlay < Gosu::Window
         @currentState = 1
         @currentTrackIndex = nil
         @audioPaused = false
+        @trackButtons = []
         if @currentTrack then @currentTrack.stop end
         @currentTrack = nil
       end
       #Next and previous button
-      if (mouse_x > 270 and mouse_x < 290) and (mouse_y > 315 and mouse_y < 335) then #Next
+      if (mouse_x > 270 and mouse_x < 290) and (mouse_y > 280 and mouse_y < 300) then #Next
         @currentTrack.stop
         @currentTrackIndex += 1
         if @currentTrackIndex > albumTracks.length - 1 then @currentTrackIndex = 0 end
         if @audioPaused then @currentTrack = Gosu::Song.new(albumTracks[@currentTrackIndex].location) else playIndexedTrack() end
-      elsif (mouse_x > 210 and mouse_x < 230) and (mouse_y > 315 and mouse_y < 335) then #Previous
+      elsif (mouse_x > 210 and mouse_x < 230) and (mouse_y > 280 and mouse_y < 300) then #Previous
         @currentTrack.stop
         @currentTrackIndex -= 1
         if @currentTrackIndex < 0 then @currentTrackIndex = albumTracks.length - 1 end
@@ -202,7 +216,7 @@ class AudioPlay < Gosu::Window
       if !@audioPaused and !@currentTrack.playing? then
         albumTracks = @albums[@currentAlbum].tracks
         @currentTrackIndex += 1
-        if @currentTrackIndex > albumTracks.length then @currentTrackIndex = 0 end
+        if @currentTrackIndex > albumTracks.length - 1 then @currentTrackIndex = 0 end
         playIndexedTrack()
       end
     end
@@ -210,22 +224,28 @@ class AudioPlay < Gosu::Window
   #
   def draw()
     if @currentState == 1 then
-      for i in 0..[3, @albums.length - 1].min do 
+      #Drawing the page shift buttons
+      @trackFont.draw_text(@page.to_s, 245, 5, 0)
+      # @nextIcon.draw(480, 250, 0, 20.0/@nextIcon.width, 20.0/@nextIcon.height)
+      # @previousIcon.draw(0, 250, 0, 20.0/@previousIcon.width, 20.0/@previousIcon.height)
+      #Drawing the album buttons
+      for i in (4*(@page - 1))..[3 + (4*(@page - 1)), @albums.length - 1].min do 
+        if !@albums[i] then next end
+        aButtonIndex = i - 4*(@page - 1) 
         iconpath = @albums[i].albumicon
         albumicon = Gosu::Image.new(iconpath)
         scaleX = 200.0/albumicon.width
         scaleY = 200.0/albumicon.height
-        albumicon.draw($albumButtons[i][0], $albumButtons[i][1], 0, scaleX, scaleY)
+        albumicon.draw($albumButtons[aButtonIndex][0], $albumButtons[aButtonIndex][1], 0, scaleX, scaleY)
         #Album name
         displayText = @albums[i].title + ' - ' + @albums[i].artist
-        posX = $albumButtons[i][0] + 100 - @trackFont.text_width(displayText)/2.0
-        posY = $albumButtons[i][1] == 275 ? 475 : 225
-        
+        posX = $albumButtons[aButtonIndex][0] + 100 - @trackFont.text_width(displayText)/2.0
+        posY = $albumButtons[aButtonIndex][1] == 275 ? 475 : 225
         #Check if mouse is on any of the button
         hovering = false
-        if (mouse_x > $albumButtons[i][0] and mouse_x < $albumButtons[i][0] + 200) and (mouse_y > $albumButtons[i][1] and mouse_y < $albumButtons[i][1] + 200) then
-          rectX = $albumButtons[i][0] - 10 #(+100 - 110)
-          rectY = $albumButtons[i][1] - 10
+        if (mouse_x > $albumButtons[aButtonIndex][0] and mouse_x < $albumButtons[aButtonIndex][0] + 200) and (mouse_y > $albumButtons[aButtonIndex][1] and mouse_y < $albumButtons[aButtonIndex][1] + 200) then
+          rectX = $albumButtons[aButtonIndex][0] - 10 #(+100 - 110)
+          rectY = $albumButtons[aButtonIndex][1] - 10
           Gosu.draw_rect(rectX, rectY, 220, 240, Gosu::Color::WHITE, -1)
           hovering = true
         end
@@ -239,27 +259,25 @@ class AudioPlay < Gosu::Window
       albumTracks = @albums[@currentAlbum].tracks
       #Drawing utility buttons
       @homeIcon.draw(5, 5, 0, 20.0/@homeIcon.width, 20.0/@homeIcon.height)
-      @nextIcon.draw(270, 315, 0, 20.0/@nextIcon.width, 20.0/@nextIcon.height)
-      @previousIcon.draw(210, 315, 0, 20.0/@previousIcon.width, 20.0/@previousIcon.height)
+      @nextIcon.draw(270, 280, 0, 20.0/@nextIcon.width, 20.0/@nextIcon.height)
+      @previousIcon.draw(210, 280, 0, 20.0/@previousIcon.width, 20.0/@previousIcon.height)
       if !@audioPaused then
-        @pauseIcon.draw(240, 315, 0, 20.0/@pauseIcon.width, 20.0/@pauseIcon.height)
+        @pauseIcon.draw(240, 280, 0, 20.0/@pauseIcon.width, 20.0/@pauseIcon.height)
         displayText = "#{albumTracks[@currentTrackIndex].name}"
         posX = 250 - @trackFont.text_width(displayText)/2
-        @trackFont.draw_text(displayText, posX, 290, 0)
+        @trackFont.draw_text(displayText, posX, 260, 0)
       else
-        @playIcon.draw(240, 315, 0, 20.0/@playIcon.width, 20.0/@playIcon.height)
+        @playIcon.draw(240, 280, 0, 20.0/@playIcon.width, 20.0/@playIcon.height)
         displayText = "Paused - #{albumTracks[@currentTrackIndex].name}"
         posX = 250 - @trackFont.text_width(displayText)/2
-        @trackFont.draw_text(displayText, posX, 290, 0)
+        @trackFont.draw_text(displayText, posX, 260, 0)
       end
       #Drawing track buttons
-      @currentAlbumIcon.draw(125, 25, 0, 250.0/@currentAlbumIcon.width, 250.0/@currentAlbumIcon.height)
-      buttonX = 25
-      buttonY = 350
-      for i in 0..[15, albumTracks.length - 1].min do
+      @currentAlbumIcon.draw(125, 5, 0, 250.0/@currentAlbumIcon.width, 250.0/@currentAlbumIcon.height)
+      for i in 0..@trackButtons.length - 1 do
+        buttonX = @trackButtons[i][0]
+        buttonY = @trackButtons[i][1]
         @trackFont.draw_text(processString(albumTracks[i].name), buttonX, buttonY, 0)
-        @trackButtons << [buttonX, buttonY, @trackFont.text_width(processString(albumTracks[i].name))]
-        if i%2 == 0 then buttonX += 225 else buttonX -= 225; buttonY += 20 end
       end
       #Mark the current track that is being indexed.
       Gosu.draw_rect(@trackButtons[@currentTrackIndex][0] - 10, @trackButtons[@currentTrackIndex][1] + 5, 5, 5, Gosu::Color::RED)
@@ -271,6 +289,10 @@ class AudioPlay < Gosu::Window
       getButtonClicked()
     elsif id == Gosu::KbEscape then
       exit
+    elsif id == Gosu::KbLeft
+      if @page > 1 then @page -= 1 end
+    elsif id == Gosu::KbRight
+      if @page < @maxPage then @page += 1 end
     end
     
   end
