@@ -1,95 +1,6 @@
 require 'gosu'
-
-$genre_names = ['Null', 'Pop', 'Classic', 'Jazz', 'Rock']
-
-#Classes
-class Album
-    attr_accessor :title, :artist, :genre, :albumicon, :tracks
-    def initialize (title, artist, genre, icon, tracks)
-      @title = title
-      @artist = artist
-      @genre = genre
-      @albumicon = icon
-      @tracks = tracks
-    end
-end
-
-class Track
-	attr_accessor :name, :location
-
-	def initialize (name, location)
-		@name = name
-		@location = location
-	end
-end
-
-#Essential functions
-def read_track(music_file)
-	  track = Track.new(music_file.gets, music_file.gets.chomp)
-  	return track
-end
-
-def read_tracks(music_file)
-	count = music_file.gets().to_i()
-  tracks = Array.new()
-  # Put a while loop here which increments an index to read the tracks
-	index = 0
-	while index < count 
-		track = read_track(music_file)
-		tracks << track
-		index += 1
-	end
-	return tracks
-end
-
-def read_albums(music_file)
-  count = music_file.gets().to_i()
-  albums = Array.new()
-  # read in all the Album's fields/attributes including all the tracks
-  index = 0
-  while index < count
-    album_artist = music_file.gets.chomp
-    album_title = music_file.gets.chomp
-    album_year = music_file.gets()
-    album_genre = music_file.gets()
-    album_icon = music_file.gets.chomp
-    tracks = read_tracks(music_file)
-    album = Album.new(album_title, album_artist, album_genre, album_icon, tracks)
-    albums << album
-    index += 1
-  end
-	return albums
-end
-
-#Debuggin functions
-def print_track(track)
-	puts(track.name)
-	#puts(track.location)
-end
-
-def print_tracks(tracks)
-	index = 0
-	while index < tracks.length
-		print_track(tracks[index])
-		index += 1
-	end
-end
-
-def print_album(album)
-  puts(album.title)
-	puts(album.artist)
-	puts('Genre is ' + album.genre.to_s)
-	puts($genre_names[album.genre.to_i])
-	print_tracks(album.tracks)
-end
-
-def print_albums(albums)
-  index = 0
-  while index < albums.length
-    print_album(albums[index])
-    index += 1
-  end
-end
+require './fileReader.rb'
+require './classes.rb'
 
 def processString(str)
   if str.length > 26 then
@@ -259,15 +170,15 @@ class AudioPlay < Gosu::Window
       albumTracks = @albums[@currentAlbum].tracks
       #Drawing utility buttons
       @homeIcon.draw(5, 5, 0, 20.0/@homeIcon.width, 20.0/@homeIcon.height)
-      @nextIcon.draw(270, 280, 0, 20.0/@nextIcon.width, 20.0/@nextIcon.height)
-      @previousIcon.draw(210, 280, 0, 20.0/@previousIcon.width, 20.0/@previousIcon.height)
+      @nextIcon.draw(270, 285, 0, 20.0/@nextIcon.width, 20.0/@nextIcon.height)
+      @previousIcon.draw(210, 285, 0, 20.0/@previousIcon.width, 20.0/@previousIcon.height)
       if !@audioPaused then
-        @pauseIcon.draw(240, 280, 0, 20.0/@pauseIcon.width, 20.0/@pauseIcon.height)
+        @pauseIcon.draw(240, 285, 0, 20.0/@pauseIcon.width, 20.0/@pauseIcon.height)
         displayText = "#{albumTracks[@currentTrackIndex].name}"
         posX = 250 - @trackFont.text_width(displayText)/2
         @trackFont.draw_text(displayText, posX, 260, 0)
       else
-        @playIcon.draw(240, 280, 0, 20.0/@playIcon.width, 20.0/@playIcon.height)
+        @playIcon.draw(240, 285, 0, 20.0/@playIcon.width, 20.0/@playIcon.height)
         displayText = "Paused - #{albumTracks[@currentTrackIndex].name}"
         posX = 250 - @trackFont.text_width(displayText)/2
         @trackFont.draw_text(displayText, posX, 260, 0)
@@ -280,7 +191,7 @@ class AudioPlay < Gosu::Window
         @trackFont.draw_text(processString(albumTracks[i].name), buttonX, buttonY, 0)
       end
       #Mark the current track that is being indexed.
-      Gosu.draw_rect(@trackButtons[@currentTrackIndex][0] - 10, @trackButtons[@currentTrackIndex][1] + 5, 5, 5, Gosu::Color::RED)
+      Gosu.draw_rect(@trackButtons[@currentTrackIndex][0] - 10, @trackButtons[@currentTrackIndex][1] + 7.5, 5, 5, Gosu::Color::RED)
     end
   end
   #
